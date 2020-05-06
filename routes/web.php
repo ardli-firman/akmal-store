@@ -2,7 +2,11 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use Illuminate\Auth\GenericUser;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Laravel\Lumen\Routing\Router;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +19,16 @@ use Illuminate\Support\Str;
 |
 */
 
-$router->get('/', function () use ($router) {
-    return Str::random(32);
-    // return $router->app->version();
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    $router->post('login', 'AuthController@login');
 });
+
+$router->get('/user', ['middleware' => 'auth', function (Request $request) {
+    return Auth::user();
+}]);
+
+$router->get('/api-key', function () {
+    return Str::random(64);
+});
+
+$router->get('/test', 'ProductController@index');
