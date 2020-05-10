@@ -31,4 +31,28 @@ $router->get('/api-key', function () {
     return Str::random(64);
 });
 
-$router->get('/test', 'ProductController@index');
+$router->group(['prefix' => 'product'], function () use ($router) {
+    $router->get('/', 'ProductController@index');
+    $router->get('/{productId}', 'ProductController@show');
+    $router->get('/image/{imageName}', 'ProductController@showImage');
+    $router->post('/store', 'ProductController@store');
+    $router->delete('/destroy/{productId}', 'ProductController@destroy');
+});
+
+$router->group(['prefix' => 'category'], function () use ($router) {
+    $router->get('/', 'CategoryController@index');
+    $router->get('/{categoryId}', 'CategoryController@show');
+    $router->post('/store', 'CategoryController@store');
+    $router->delete('/destroy/{categoryId}', 'CategoryController@destroy');
+});
+
+$router->group(['prefix' => 'customer'], function () use ($router) {
+    $router->get('/', 'CustomerController@index');
+    $router->post('/store', 'CustomerController@store');
+    $router->delete('/destroy/{customerId}', 'CustomerController@destroy');
+
+    $router->get('/{customerId}', 'CustomerController@show');
+
+    $router->get('/{customerId}/order', 'CustomerOrderController@index');
+    $router->get('/{customerId}/[order/{orderId}]', 'CustomerOrderController@show');
+});

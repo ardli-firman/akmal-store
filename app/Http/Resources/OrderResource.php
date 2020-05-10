@@ -16,8 +16,11 @@ class OrderResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'order_date' => Carbon::parse($this->order_date)->formatLocalized('%A %d %B %Y')
+            'order_id' => $this->id,
+            'customer_id' => $this->customer_id,
+            'order_date' => Carbon::parse($this->order_date)->formatLocalized('%A %d %B %Y'),
+            'note' => $this->note,
+            'order_product' => new OrderProductCollectionResource($this->orderProduct)
         ];
     }
 }
