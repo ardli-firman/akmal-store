@@ -18,7 +18,14 @@ use Laravel\Lumen\Routing\Router;
 | and give it the Closure to call when that URI is requested.
 |
 */
-
+// Route
+$router->get('/', function () {
+    return response()
+        ->json([
+            'message' => 'Hello world :*',
+            'app version' => app()->version()
+        ]);
+});
 // login user
 $router->post('login', 'AuthController@login');
 // registrasi user
