@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'api_key'
+        'name', 'email', 'password', 'api_token'
     ];
 
     /**
@@ -29,9 +29,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
 }

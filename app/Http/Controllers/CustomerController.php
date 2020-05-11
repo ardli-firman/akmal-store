@@ -51,7 +51,7 @@ class CustomerController extends Controller
         if ($customer == null) {
             return (new ResponseResource(null, 'Customer tidak ada'))
                 ->response()
-                ->setStatusCode(400);;
+                ->setStatusCode(400);
         }
         if ($customer->delete()) {
             return (new ResponseResource($customer, 'Berhasil'))
@@ -60,6 +60,6 @@ class CustomerController extends Controller
         }
         return (new ResponseResource(null, 'Gagal'))
             ->response()
-            ->setStatusCode(400);;
+            ->setStatusCode(400);
     }
 }

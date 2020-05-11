@@ -52,7 +52,8 @@ class ProductController extends Controller
         $valid['image'] = $imageName;
         $product = Product::firstOrCreate($valid);
         if ($product != null) {
-            return (new ResponseResource($product, 'Berhasil'))
+            return (new ProductResource($product))
+                ->additional(['message' => 'Berhasil'])
                 ->response()
                 ->setStatusCode(201);
         }

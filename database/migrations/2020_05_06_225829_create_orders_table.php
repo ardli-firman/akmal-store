@@ -19,6 +19,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('customer_id');
             $table->date('order_date');
             $table->text('note')->nullable(true);
+            $table->integer('paid')->nullable(true);
+            $table->integer('change')->nullable(true);
+            $table->integer('total_order');
             $table->timestamps();
 
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');

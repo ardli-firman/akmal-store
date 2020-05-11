@@ -45,4 +45,26 @@ class AuthController extends Controller
         $user->save();
         return (new ResponseResource($user, 'Berhasil'));
     }
+
+    public function registrasi(Request $request)
+    {
+        $valid = $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required'
+        ]);
+
+        $valid['api_token'] = base64_encode(Str::random(32));
+        $valid['password'] = Hash::make($valid['password']);
+
+        $user = User::firstOrCreate($valid);
+        if ($user != null) {
+            return (new ResponseResource($user, 'Berhasil'))
+                ->response()
+                ->setStatusCode(201);
+        }
+        return (new ResponseResource(null, 'Gagal'))
+            ->response()
+            ->setStatusCode(400);
+    }
 }

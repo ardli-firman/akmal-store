@@ -19,40 +19,54 @@ use Laravel\Lumen\Routing\Router;
 |
 */
 
-$router->group(['prefix' => 'auth'], function () use ($router) {
-    $router->post('login', 'AuthController@login');
+// login user
+$router->post('login', 'AuthController@login');
+// registrasi user
+$router->post('registrasi', 'AuthController@registrasi');
+
+$router->group(['middleware' => 'auth'], function () use ($router) {
+
+    $router->group(['prefix' => 'product'], function () use ($router) {
+        // get all products
+        $router->get('/', 'ProductController@index');
+        // get product 
+        $router->get('/{productId}', 'ProductController@show');
+        // store product
+        $router->post('/store', 'ProductController@store');
+        // delete product
+        $router->delete('/{productId}/destroy', 'ProductController@destroy');
+    });
+
+    $router->group(['prefix' => 'category'], function () use ($router) {
+        // get all categories
+        $router->get('/', 'CategoryController@index');
+        // get category
+        $router->get('/{categoryId}', 'CategoryController@show');
+        // store category
+        $router->post('/store', 'CategoryController@store');
+        // delete category
+        $router->delete('/{categoryId}/destroy', 'CategoryController@destroy');
+    });
+
+    $router->group(['prefix' => 'customer'], function () use ($router) {
+        // get all customers profile
+        $router->get('/', 'CustomerController@index');
+        // store customer 
+        $router->post('/store', 'CustomerController@store');
+        // destroy customer
+        $router->delete('/{customerId}/destroy', 'CustomerController@destroy');
+        // get customer
+        $router->get('/{customerId}', 'CustomerController@show');
+
+        // get all customer order
+        $router->get('/{customerId}/order', 'CustomerOrderController@index');
+        // get customer order
+        $router->get('/{customerId}/[order/{orderId}]', 'CustomerOrderController@show');
+        // store customer order
+        $router->post('/{customerId}/order/store', 'CustomerOrderController@store');
+        // delete customer order
+        $router->delete('/{customerId}/order/{orderId}/destroy', 'CustomerOrderController@destroy');
+    });
 });
-
-$router->get('/user', ['middleware' => 'auth', function (Request $request) {
-    return Auth::user();
-}]);
-
-$router->get('/api-key', function () {
-    return Str::random(64);
-});
-
-$router->group(['prefix' => 'product'], function () use ($router) {
-    $router->get('/', 'ProductController@index');
-    $router->get('/{productId}', 'ProductController@show');
-    $router->get('/image/{imageName}', 'ProductController@showImage');
-    $router->post('/store', 'ProductController@store');
-    $router->delete('/destroy/{productId}', 'ProductController@destroy');
-});
-
-$router->group(['prefix' => 'category'], function () use ($router) {
-    $router->get('/', 'CategoryController@index');
-    $router->get('/{categoryId}', 'CategoryController@show');
-    $router->post('/store', 'CategoryController@store');
-    $router->delete('/destroy/{categoryId}', 'CategoryController@destroy');
-});
-
-$router->group(['prefix' => 'customer'], function () use ($router) {
-    $router->get('/', 'CustomerController@index');
-    $router->post('/store', 'CustomerController@store');
-    $router->delete('/destroy/{customerId}', 'CustomerController@destroy');
-
-    $router->get('/{customerId}', 'CustomerController@show');
-
-    $router->get('/{customerId}/order', 'CustomerOrderController@index');
-    $router->get('/{customerId}/[order/{orderId}]', 'CustomerOrderController@show');
-});
+// Get image product
+$router->get('product/image/{imageName}', 'ProductController@showImage');

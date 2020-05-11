@@ -30,8 +30,54 @@ class CustomerOrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $customerId)
     {
+        $valid = $this->validate($request, [
+            'user_id' => 'required|exists:users,id',
+            'order_date' => 'required',
+            'note' => 'required',
+            'paid' => 'required',
+            'total_order' => 'required',
+            'change' => 'required',
+            'order_products' => 'required',
+            'order_products.*.product_id' => 'required',
+            'order_products.*.quantity' => 'required',
+            'order_products.*.total' => 'required'
+        ]);
+
+        $customer = Customer::find($customerId);
+
+        if ($customer != null) {
+
+            $order = $customer->orders()->firstOrCreate([
+                'user_id' => $request->user_id,
+                'order_date' => $request->order_date,
+                'paid' => $request->paid,
+                'change' => $request->change,
+                'total_order' => $request->total_order,
+                'note' => $request->note,
+            ]);
+
+            foreach ($valid['order_products'] as $data) {
+                $order->orderProduct()->insert([
+                    'order_id' => $order->id,
+                    'product_id' => $data['product_id'],
+                    'quantity' => $data['quantity'],
+                    'total' => $data['total']
+                ]);
+            }
+
+            if ($order != null) {
+                return (new OrderResource($order))
+                    ->additional(['message' => 'Berhasil'])
+                    ->response()
+                    ->setStatusCode(201);
+            }
+        }
+
+        return (new ResponseResource(null, 'Gagal'))
+            ->response()
+            ->setStatusCode(400);
     }
 
     /**
@@ -80,8 +126,21 @@ class CustomerOrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($orderId)
     {
-        //
+        $order = Order::find($orderId);
+        if ($order == null) {
+            return (new ResponseResource(null, 'Order tidak ada'))
+                ->response()
+                ->setStatusCode(400);
+        }
+        if ($order->delete()) {
+            return (new ResponseResource($order, 'Berhasil'))
+                ->response()
+                ->setStatusCode(204);
+        }
+        return (new ResponseResource(null, 'Gagal'))
+            ->response()
+            ->setStatusCode(400);
     }
 }
