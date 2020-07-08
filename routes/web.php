@@ -77,3 +77,10 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 });
 // Get image product
 $router->get('product/image/{imageName}', 'ProductController@showImage');
+
+// Test
+$router->get('sales/','SalesController@index');
+$router->get('sales/{salesId}','SalesController@show');
+$router->post('sales/', 'SalesController@store');
+$router->post('sales/{salesId}', 'SalesController@update');
+$router->delete('sales/{salesId}', 'SalesController@destroy');
